@@ -53,7 +53,7 @@ public class menuPrincipal extends javax.swing.JFrame {
 
         labelLados.setText("Ingrese los lados de la siguiente forma:(a,b);(c,d)");
 
-        txtLados.setText("1,2;1,3;3,4");
+        txtLados.setText("a,b;a,c;c,d;b,d");
         txtLados.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtLadosActionPerformed(evt);
@@ -113,9 +113,10 @@ public class menuPrincipal extends javax.swing.JFrame {
         // TODO add your handling code here:
         String aux = this.txtVectores.getText();
         String vectores[] = aux.split(",");
+        
         int n = vectores.length;
         String matriz[][] = new String[n+1][n+1];
-        for(int i=0;i<n;i++){
+        for(int i=0;i<=n;i++){
             if(i==0){
                 for(int j=1;j<=n;j++){
                     matriz[i][j]=vectores[j-1];
@@ -123,8 +124,8 @@ public class menuPrincipal extends javax.swing.JFrame {
             }
             else{
                 matriz[i][0] = vectores[i-1];
-                for(int j=0;j<n;j++){
-                    matriz[i][j]=vectores[j];
+                for(int j=1;j<=n;j++){
+                    matriz[i][j]="0";
                 }
             }
         }
@@ -134,23 +135,47 @@ public class menuPrincipal extends javax.swing.JFrame {
         for(int i=0;i<lados.length;i++){
             ladosAux = new String[lados[i].split(",").length];
             ladosAux = lados[i].split(",");
-            //matriz[Integer.parseInt(ladosAux[0])][Integer.parseInt(ladosAux[1])] = "1";
-            
-            /*int fila=0,columna=0;
-            for(int j=0;j<n;j++){
-                if(vectores[j].equals(ladosAux[0]));
-                fila=j;
+            for(int p=1;p<=n;p++){
+                if(matriz[p][0].equals(ladosAux[0])){
+                    for(int q=1;q<=n;q++){
+                        if(matriz[0][q].equals(ladosAux[1])){
+                            matriz[p][q]="1";
+                            matriz[q][p]="1";
+                            break;
+                        }
+                    }
+                }
             }
-            for(int j=0;j<n;j++){
-                if(vectores[j].equals(ladosAux[1]));
-                columna=j;
-            }
-            matriz[fila][columna]="1";*/
         }
         
-        
+        //Para saber si el grafo es completo:
+        boolean esCompleto = true;
+        boolean esRegular = true;
+        int grados[] = new int[n];
+        int contadorGrados = 0;
+        for(int i=1;i<n;i++){
+            for(int j=1;j<n;j++){
+                if(matriz[i][j].equals("0") && i!=j){
+                    esCompleto=false;
+                }
+                if(matriz[i][j].equals("1")){
+                    contadorGrados +=1;
+                }
+            }
+            grados[i-1] = contadorGrados;
+            contadorGrados = 0;
+        }
+        for(int i=0;i<grados.length;i++){
+            for(int j=i+1;j<grados.length;j++){
+                if(grados[i]!=grados[j]){
+                    esRegular = false;
+                    System.out.println("algo pasa");
+                }
+            }
+        }
         tblMatriz mt = new tblMatriz();
         mt.mostrarMatriz(matriz, n);
+        mt.textos(esCompleto, esRegular);
         this.setVisible(false);
         mt.setVisible(true);
         
